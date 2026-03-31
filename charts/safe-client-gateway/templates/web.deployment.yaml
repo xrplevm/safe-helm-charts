@@ -44,6 +44,24 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
 
+        {{- if .Values.cors.enabled }}
+        - name: nginx-cors
+          image: nginx:alpine
+          ports:
+            - name: cors
+              containerPort: 8080
+          volumeMounts:
+            - name: nginx-cors-config
+              mountPath: /etc/nginx/conf.d
+        {{- end }}
+
+      {{- if .Values.cors.enabled }}
+      volumes:
+        - name: nginx-cors-config
+          configMap:
+            name: {{ include "safe-client-gateway.fullname" . }}-nginx-cors
+      {{- end }}
+
       {{- with .Values.web.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

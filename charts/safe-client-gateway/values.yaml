@@ -31,6 +31,8 @@ config:
     queue: "safe-events-service"
   cfgService:
     url: "http://cfg-service-safe-config-service-web"
+  txService:
+    url: "http://transaction-service-safe-transaction-service-web"
   security:
     authToken: "1234567890"
   redis:
@@ -68,6 +70,10 @@ ingress:
     enabled: false
     #host: 
     #secretName:
+
+cors:
+  enabled: true
+  allowOrigins: "https://*.minikube.net"
 
 safe-client-gateway-redis:
   enabled: true

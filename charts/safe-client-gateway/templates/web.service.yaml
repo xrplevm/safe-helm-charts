@@ -13,5 +13,5 @@ spec:
     - name: web
       protocol: TCP
       port: 80
-      targetPort: 3000
+      targetPort: {{ if .Values.cors.enabled }}8080{{ else }}3000{{ end }}
 ---
