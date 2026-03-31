@@ -34,3 +34,12 @@ dependencies:
   version: "0.1.0"
   repository: "file://../safe-wallet-web"
   condition: safe-wallet-web.enabled
+- name: safe-events-service
+  version: "0.1.0"
+  repository: "file://../safe-events-service"
+  condition: safe-events-service.enabled
+- name: rabbitmq
+  version: "14.6.5"
+  repository: "oci://registry-1.docker.io/bitnamicharts"
+  condition: general-rabbitmq.enabled
+  alias: general-rabbitmq

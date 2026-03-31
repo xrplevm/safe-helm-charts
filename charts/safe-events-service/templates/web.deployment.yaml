@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: {{ include "safe-events-service.fullname" . }}-web
+
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "safe-events-service.fullname" . }}-web
+  template:
+    metadata:
+      labels:
+        app: {{ include "safe-events-service.fullname" . }}-web
+    spec:
+      containers:
+        - name: events
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: {{ include "safe-events-service.fullname" . }}-env
+          livenessProbe:
+            httpGet:
+              path: /events/health/live
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /events/health/ready
+              port: 3000
+            periodSeconds: 30
+            timeoutSeconds: 5
+          {{- with .Values.web.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.web.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+      {{- with .Values.web.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.web.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.web.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.web.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---

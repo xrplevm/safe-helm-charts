@@ -26,10 +26,11 @@ extraEnv: []
 config:
   debug: true
   secretKey: "insecure_key_for_dev" # change me
+  mediaUrl: # leave empty to auto-generate from ingress host
   csrf:
     trustedOrigins: "https://safe-wallet.minikube.net"
   clientGateway:
-    url: "http://cgw-service-safe-client-gateway-web.default.svc.cluster.local"
+    url: "http://cgw-service-safe-client-gateway-web"
     token: "1234567890"  # change me (should be the same as client-gateway.auth.token)
   database:
     runMigration: true

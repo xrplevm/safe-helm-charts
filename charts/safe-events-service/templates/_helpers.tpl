@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "safe-client-gateway.name" -}}
+{{- define "safe-events-service.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "safe-client-gateway.fullname" -}}
+{{- define "safe-events-service.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "safe-client-gateway.chart" -}}
+{{- define "safe-events-service.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "safe-client-gateway.labels" -}}
-helm.sh/chart: {{ include "safe-client-gateway.chart" . }}
-{{ include "safe-client-gateway.selectorLabels" . }}
+{{- define "safe-events-service.labels" -}}
+helm.sh/chart: {{ include "safe-events-service.chart" . }}
+{{ include "safe-events-service.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,31 +45,19 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "safe-client-gateway.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "safe-client-gateway.name" . }}
+{{- define "safe-events-service.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "safe-events-service.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
-
-{{/*
-Create a default fully qualified app name for redis
-*/}}
-{{- define "safe-client-gateway.redis.fullname" -}}
-{{- if index .Values "safe-client-gateway-redis" "fullnameOverride" }}
-{{- index .Values "safe-client-gateway-redis" "fullnameOverride" | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- $suffix := "safe-client-gateway-redis" }}
-{{- printf "%s-%s" .Release.Name $suffix | trunc 63 | trimSuffix "-" }}
-{{- end }}
 {{- end }}
 
 {{/*
 Create a default fully qualified app name for postgresql
 */}}
-{{- define "safe-client-gateway.postgresql.fullname" -}}
-{{- if index .Values "safe-client-gateway-postgresql" "fullnameOverride" }}
-{{- index .Values "safe-client-gateway-postgresql" "fullnameOverride" | trunc 63 | trimSuffix "-" }}
+{{- define "safe-events-service.postgresql.fullname" -}}
+{{- if index .Values "safe-events-service-postgresql" "fullnameOverride" }}
+{{- index .Values "safe-events-service-postgresql" "fullnameOverride" | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $suffix := "safe-client-gateway-postgresql" }}
+{{- $suffix := "safe-events-service-postgresql" }}
 {{- printf "%s-%s" .Release.Name $suffix | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}

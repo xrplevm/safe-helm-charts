@@ -1,6 +1,9 @@
 # Default values for safe-stack.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+#
+# This values file is configured to match the docker-compose setup
+# from safe-infrastructure/ as closely as possible.
 
 ## Provide a name in place of safe-stack for `app:` labels
 ##
@@ -15,8 +18,26 @@ imagePullSecrets: []
 
 ##
 ## ---------------------------------------------------------------------------
+## GENERAL RABBITMQ (inter-service event bus)
+## Docker Compose equivalent: general-rabbitmq
+## Used by: txs-service (EVENTS_QUEUE_URL), events-service (AMQP_URL)
+## ---------------------------------------------------------------------------
+##
+general-rabbitmq:
+  enabled: true
+  auth:
+    username: guest
+    password: guest
+  persistence:
+    enabled: true
+    storageClass: "standard"
+    size: 100Mi
+
+##
+## ---------------------------------------------------------------------------
 ## TXS-SERVICE CONFIGURATION
-## for more options see xxxxxxx
+## Docker Compose equivalent: txs-web, txs-worker-*, txs-scheduler
+## ---------------------------------------------------------------------------
 ##
 safe-transaction-service:
   enabled: true
@@ -27,23 +48,27 @@ safe-transaction-service:
     pullPolicy: Always
   extraEnv: []
   config:
-    debug: true
-    queues: default,indexing,contracts,tokens,notifications,webhooks
+    debug: false
+    # Includes 'processing' queue missing from original Helm chart
+    # Docker Compose splits into 3 workers, Helm uses 1 (values-only fix)
+    queues: "default,indexing,processing,contracts,tokens,notifications,webhooks"
     secretKey: "Very-secure-secret-string"
     csrf:
-      trustedOrigins: "https://safe-wallet.minikube.net"
+      trustedOrigins: "http://localhost:8000"
     node:
-      url: # leave empty if you use ganache
-      useGanacheNode: true
+      url: "http://your-rpc-node:8545" # Set your RPC endpoint
+      useGanacheNode: false
     database:
       runMigration: true
-      url: # leave empty unless useExisting=true e.g plsql://
-    redis: 
-      url: # leave empty unless useExisting=true e.g redis://
-    rabbitmq: 
-      url: # leave empty unless useExisting=true e.g amqp://
-      user: guest
-      password: guest
+      url: # leave empty, uses bitnami postgresql subchart
+    redis:
+      url: # leave empty, uses bitnami redis subchart
+    rabbitmq:
+      url: # leave empty, uses bitnami rabbitmq subchart (for Celery)
+    events:
+      # Points to the general-rabbitmq (not the TXS-internal one)
+      # Docker Compose: EVENTS_QUEUE_URL=amqp://guest:guest@general-rabbitmq:5672/
+      queueUrl: "amqp://guest:guest@safe-stack-general-rabbitmq:5672/"
     admin:
       auth:
         enabled: true
@@ -69,7 +94,7 @@ safe-transaction-service:
     tolerations: {}
     securityContext: {}
     podSecurityContext: {}
-    resources: 
+    resources:
       requests:
         memory: "300Mi"
         cpu: "50m"
@@ -93,48 +118,34 @@ safe-transaction-service:
     enabled: true
     ingressClassName: nginx
     host: txs-service.minikube.net
-    annotations: 
+    annotations:
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/enable-cors: "false"
     tls:
       enabled: false
-      #host: 
+      #host:
       #secretName:
   ganacheNode:
-    enabled: true
-    image:
-      repository: gjeanmart/safe-ganache-node
-      tag: latest
-      pullPolicy: Always
-    config:
-      mnemonic: "test test test test test test test test test test test junk"
-      chainId: 1337
-      deterministicDeployment: "true"
-      persistence:
-        storageClass: standard
-        size: 100Mi
-    ingress:
-      enabled: true
-      ingressClassName: nginx
-      host: node.minikube.net
-      annotations: {}
-      tls:
-        enabled: false
-        #host: 
-        #secretName:
+    enabled: false # Not used in docker-compose production setup
+  # Docker Compose: txs-db (postgres:14-alpine)
+  # Credentials: psql://postgres:postgres@txs-db:5432/postgres
   safe-transaction-service-postgresql:
     enabled: true
     global:
       postgresql:
         auth:
-          username: safe
-          password: changeme
-          database: txs
+          username: postgres
+          password: postgres
+          database: postgres
     primary:
+      # Docker Compose: command: -c 'max_connections=250'
+      extendedConfiguration: |
+        max_connections = 250
       persistence:
         enabled: true
         storageClass: "standard"
         size: 100Mi
+  # Docker Compose: txs-redis
   safe-transaction-service-redis:
     enabled: true
     auth:
@@ -146,6 +157,7 @@ safe-transaction-service:
         size: 100Mi
     replica:
       replicaCount: 0
+  # Docker Compose: txs-rabbitmq (Celery broker only)
   safe-transaction-service-rabbitmq:
     enabled: true
     auth:
@@ -159,7 +171,8 @@ safe-transaction-service:
 ##
 ## ---------------------------------------------------------------------------
 ## CFG-SERVICE CONFIGURATION
-## for more options see xxxxxxx
+## Docker Compose equivalent: cfg-web
+## ---------------------------------------------------------------------------
 ##
 safe-config-service:
   enabled: true
@@ -171,11 +184,13 @@ safe-config-service:
   extraEnv: []
   config:
     debug: true
-    secretKey: "insecure_key_for_dev"
+    secretKey: "very_strong_key_you_should_change"
+    mediaUrl: # leave empty to auto-generate from ingress host
     csrf:
-      trustedOrigins: "https://safe-wallet.minikube.net"
+      trustedOrigins: "http://localhost:8000"
     clientGateway:
-      url: "http://safe-stack-safe-client-gateway-web.default.svc.cluster.local"
+      url: "http://safe-stack-safe-client-gateway-web"
+      # Docker Compose uses CGW_AUTH_TOKEN (template updated from CGW_FLUSH_TOKEN)
       token: "1234567890"
     database:
       runMigration: true
@@ -197,31 +212,26 @@ safe-config-service:
     securityContext: {}
     podSecurityContext: {}
     resources: {}
-      # requests: ## crashing the pod
-      #   memory: "1000Mi"
-      #   cpu: "150m"
-      # limits:
-      #   memory: "2000Mi"
-      #   cpu: "300m"    
   ingress:
     enabled: true
     ingressClassName: nginx
     host: cfg-service.minikube.net
-    annotations: 
+    annotations:
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/enable-cors: "false"
     tls:
       enabled: false
-      #host: 
+      #host:
       #secretName:
+  # Docker Compose: cfg-db (postgres:14-alpine, default postgres/postgres/postgres)
   safe-config-service-postgresql:
     enabled: true
     global:
       postgresql:
         auth:
-          username: safe
-          password: changeme
-          database: cfg
+          username: postgres
+          password: postgres
+          database: postgres
     primary:
       persistence:
         enabled: true
@@ -231,7 +241,8 @@ safe-config-service:
 ##
 ## ---------------------------------------------------------------------------
 ## CGW-SERVICE CONFIGURATION
-## for more options see xxxxxxx
+## Docker Compose equivalent: cgw-web
+## ---------------------------------------------------------------------------
 ##
 safe-client-gateway:
   enabled: true
@@ -242,14 +253,52 @@ safe-client-gateway:
     pullPolicy: Always
   extraEnv: []
   config:
-    debug: true
+    debug: false
     cfgService:
-      url: "http://safe-stack-safe-config-service-web.default.svc.cluster.local"
+      url: "http://safe-stack-safe-config-service-web"
     security:
       authToken: "1234567890"
-    redis: 
-      host: # leave empty unless useExisting=true
+    redis:
+      host: # leave empty, uses bitnami redis subchart
       port: 6379
+    database:
+      host: # leave empty, uses bitnami postgresql subchart
+      name: "postgres"
+  # All env vars from cgw.env missing from the Helm configmap template
+  extraEnvVars:
+    # CORS (app-level, compose sets ALLOW_CORS=true)
+    ALLOW_CORS: "true"
+    # Staking (Kiln provider)
+    STAKING_API_KEY: ""
+    STAKING_TESTNET_API_KEY: ""
+    # Bridge (LI.FI)
+    BRIDGE_API_KEY: ""
+    # JWT
+    JWT_ISSUER: ""
+    JWT_SECRET: ""
+    # Community
+    FINGERPRINT_ENCRYPTION_KEY: ""
+    # CSV Export / AWS
+    CSV_AWS_ACCESS_KEY_ID: "dummy"
+    CSV_AWS_SECRET_ACCESS_KEY: "dummy"
+    AWS_ACCESS_KEY_ID: "dummy"
+    AWS_SECRET_ACCESS_KEY: "dummy"
+    # Blocklist
+    BLOCKLIST_ENCRYPTED_DATA: ""
+    BLOCKLIST_SECRET_KEY: ""
+    BLOCKLIST_SECRET_SALT: ""
+    # Relay provider API keys (9 chains missing from Helm, present in Docker Compose)
+    RELAY_PROVIDER_API_KEY_OPTIMISM: ""
+    RELAY_PROVIDER_API_KEY_BSC: ""
+    RELAY_PROVIDER_API_KEY_POLYGON: ""
+    RELAY_PROVIDER_API_KEY_POLYGON_ZKEVM: ""
+    RELAY_PROVIDER_API_KEY_BASE: ""
+    RELAY_PROVIDER_API_KEY_AVALANCHE: ""
+    RELAY_PROVIDER_API_KEY_LINEA: ""
+    RELAY_PROVIDER_API_KEY_BLAST: ""
+    RELAY_PROVIDER_API_KEY_UNICHAIN: ""
+    # Push Notifications
+    PUSH_NOTIFICATIONS_API_BASE_URI: "https://fcm.googleapis.com/v1/projects"
   web:
     nodeSelector: {}
     affinity: {}
@@ -262,12 +311,12 @@ safe-client-gateway:
         cpu: "300m"
       limits:
         memory: "600Mi"
-        cpu: "600m" 
+        cpu: "600m"
   ingress:
     enabled: true
     ingressClassName: nginx
     host: cgw-service.minikube.net
-    annotations: 
+    annotations:
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/enable-cors: "true"
       nginx.ingress.kubernetes.io/cors-allow-methods: "OPTIONS, GET, HEAD, DELETE, PUT, POST"
@@ -275,8 +324,9 @@ safe-client-gateway:
       nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,Safe-Wallet-Signature,Safe-Wallet-Signature-Timestamp"
     tls:
       enabled: false
-      #host: 
+      #host:
       #secretName:
+  # Docker Compose: cgw-redis
   safe-client-gateway-redis:
     enabled: true
     auth:
@@ -288,34 +338,118 @@ safe-client-gateway:
         size: 100Mi
     replica:
       replicaCount: 0
+  # Docker Compose: cgw-db (postgres:14-alpine) - NEW, was missing from original Helm
+  safe-client-gateway-postgresql:
+    enabled: true
+    global:
+      postgresql:
+        auth:
+          username: postgres
+          password: postgres
+          database: postgres
+    primary:
+      persistence:
+        enabled: true
+        storageClass: "standard"
+        size: 100Mi
 
 ##
 ## ---------------------------------------------------------------------------
 ## SAFE-WALLET CONFIGURATION
-## for more options see xxxxxxx
+## Docker Compose equivalent: ui
+## ---------------------------------------------------------------------------
 ##
 safe-wallet-web:
   enabled: true
   replicaCount: 1
   image:
-    repository: gjeanmart/safe-wallet-web # safeglobal/safe-wallet-web
-    tag: force_safe_deployment # latest
+    # Official image (was gjeanmart/safe-wallet-web:force_safe_deployment)
+    repository: safeglobal/safe-wallet-web
+    tag: latest
     pullPolicy: Always
   extraEnv: []
   config:
+    # Updated from 1.3.0 to 1.4.1 to match Docker Compose
+    safeVersion: "1.4.1"
     clientGateway:
       url: "https://cgw-service.minikube.net"
     walletConnect:
       projectId: ""
       bridge: ""
+  # Extra env vars from ui.env not in the configmap template
+  extraEnvVars:
+    NEXT_PUBLIC_DEFAULT_MAINNET_CHAIN_ID: ""
   ingress:
     enabled: true
     ingressClassName: nginx
     host: safe-wallet.minikube.net
     annotations:
-        nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-        nginx.ingress.kubernetes.io/enable-cors: "false"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "false"
     tls:
       enabled: false
-      #host: 
+      #host:
       #secretName:
+
+##
+## ---------------------------------------------------------------------------
+## EVENTS-SERVICE CONFIGURATION (NEW)
+## Docker Compose equivalent: events-web
+## ---------------------------------------------------------------------------
+##
+safe-events-service:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: safeglobal/safe-events-service
+    tag: latest
+    pullPolicy: Always
+  extraEnv: []
+  config:
+    database:
+      url: # leave empty, uses bitnami postgresql subchart
+    amqp:
+      # Points to the general-rabbitmq (shared event bus)
+      # Docker Compose: AMQP_URL=amqp://general-rabbitmq:5672
+      url: "amqp://guest:guest@safe-stack-general-rabbitmq:5672/"
+      exchange: "safe-transaction-service-events"
+      queue: "safe-events-service"
+    admin:
+      email: "admin@safe"
+      password: "password"
+    webhooksCacheTtl: "300000"
+    nodeEnv: "production"
+    urlBasePath: "/events"
+  web:
+    nodeSelector: {}
+    affinity: {}
+    tolerations: {}
+    securityContext: {}
+    podSecurityContext: {}
+    resources: {}
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    host: events-service.minikube.net
+    annotations:
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "false"
+    tls:
+      enabled: false
+      #host:
+      #secretName:
+  # Docker Compose: events-db (postgres:14-alpine)
+  # Credentials: psql://postgres:postgres@events-db:5432/postgres
+  safe-events-service-postgresql:
+    enabled: true
+    global:
+      postgresql:
+        auth:
+          username: postgres
+          password: postgres
+          database: postgres
+    primary:
+      persistence:
+        enabled: true
+        storageClass: "standard"
+        size: 100Mi

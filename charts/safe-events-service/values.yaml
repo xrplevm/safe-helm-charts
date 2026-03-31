@@ -1,0 +1,71 @@
+# Default values for safe-events-service.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Provide a name in place of safe-events-service for `app:` labels
+##
+nameOverride: ""
+## Provide a name to substitute for the full names of resources
+##
+fullnameOverride: ""
+## Reference to one or more secrets to be used when pulling images
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+##
+imagePullSecrets: []
+
+replicaCount: 1
+
+image:
+  repository: safeglobal/safe-events-service
+  tag: latest
+  pullPolicy: Always
+
+extraEnv: []
+
+config:
+  database:
+    url: # leave empty if safe-events-service-postgresql.enabled=true
+  amqp:
+    url: "" # e.g. amqp://guest:guest@rabbitmq:5672/
+    exchange: "safe-transaction-service-events"
+    queue: "safe-events-service"
+  admin:
+    email: "admin@safe"
+    password: "password"
+  webhooksCacheTtl: "300000"
+  nodeEnv: "production"
+  urlBasePath: "/events"
+
+web:
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+  securityContext: {}
+  podSecurityContext: {}
+  resources: {}
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  host: events-service.minikube.net
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "false"
+  tls:
+    enabled: false
+    #host:
+    #secretName:
+
+safe-events-service-postgresql:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        username: postgres
+        password: postgres
+        database: postgres
+  primary:
+    persistence:
+      enabled: true
+      storageClass: "standard"
+      size: 100Mi

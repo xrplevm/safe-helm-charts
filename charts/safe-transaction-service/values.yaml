@@ -32,8 +32,10 @@ config:
     runMigration: true
   redis: 
     url: # leave empty if safe-transaction-service-redis.enabled=true (e.g redis://)
-  rabbitmq: 
+  rabbitmq:
     url: # leave empty if safe-transaction-service-rabbitmq.enabled=true (e.g amqp://)
+  events:
+    queueUrl: # leave empty to use TXS rabbitmq, or set to general-rabbitmq URL
   admin:
     auth:
       enabled: true

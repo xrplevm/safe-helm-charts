@@ -25,13 +25,20 @@ extraEnv: []
 
 config:
   debug: true
+  amqp:
+    url: "" # e.g. amqp://guest:guest@rabbitmq:5672/
+    exchange: "safe-transaction-service-events"
+    queue: "safe-events-service"
   cfgService:
-    url: "http://cfg-service-safe-config-service-web.default.svc.cluster.local"
+    url: "http://cfg-service-safe-config-service-web"
   security:
     authToken: "1234567890"
-  redis: 
+  redis:
     host: # leave empty unless safe-client-gateway-redis.enabled=true
     port: 6379
+  database:
+    host: # leave empty if safe-client-gateway-postgresql.enabled=true
+    name: "postgres"
 
 web:
   nodeSelector: {}
@@ -73,3 +80,17 @@ safe-client-gateway-redis:
       size: 100Mi
   replica:
     replicaCount: 0
+
+safe-client-gateway-postgresql:
+  enabled: false
+  global:
+    postgresql:
+      auth:
+        username: postgres
+        password: postgres
+        database: postgres
+  primary:
+    persistence:
+      enabled: true
+      storageClass: "standard"
+      size: 100Mi
