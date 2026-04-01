@@ -55,8 +55,8 @@ spec:
           {{- end }}
           {{- if .Values.logo.enabled }}
             - name: logo
-              mountPath: /app/apps/web/public/images/logo.svg
-              subPath: logo.svg
+              mountPath: /app/apps/web/public/images/logo.png
+              subPath: logo.png
           {{- end }}
           {{- end }}
 #          livenessProbe:
