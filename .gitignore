@@ -5,3 +5,4 @@
 .DS_Store
 /tmp
 *.log
+/charts/safe-stack/values-mainnet.yaml
