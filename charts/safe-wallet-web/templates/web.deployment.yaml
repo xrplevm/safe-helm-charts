@@ -25,6 +25,40 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "safe-wallet-web.fullname" . }}-env
+          {{- if or .Values.favicon.enabled .Values.logo.enabled }}
+          volumeMounts:
+          {{- if .Values.favicon.enabled }}
+            - name: favicon
+              mountPath: /app/apps/web/public/favicon.ico
+              subPath: favicon.ico
+            - name: favicon
+              mountPath: /app/apps/web/public/favicons/favicon.ico
+              subPath: favicons-favicon.ico
+            - name: favicon
+              mountPath: /app/apps/web/public/favicons/favicon-16x16.png
+              subPath: favicon-16x16.png
+            - name: favicon
+              mountPath: /app/apps/web/public/favicons/favicon-32x32.png
+              subPath: favicon-32x32.png
+            - name: favicon
+              mountPath: /app/apps/web/public/favicons/apple-touch-icon.png
+              subPath: apple-touch-icon.png
+            - name: favicon
+              mountPath: /app/apps/web/public/favicons/android-chrome-192x192.png
+              subPath: android-chrome-192x192.png
+            - name: favicon
+              mountPath: /app/apps/web/public/favicons/android-chrome-512x512.png
+              subPath: android-chrome-512x512.png
+            - name: favicon
+              mountPath: /app/apps/web/public/favicons/safari-pinned-tab.svg
+              subPath: safari-pinned-tab.svg
+          {{- end }}
+          {{- if .Values.logo.enabled }}
+            - name: logo
+              mountPath: /app/apps/web/public/images/logo.svg
+              subPath: logo.svg
+          {{- end }}
+          {{- end }}
 #          livenessProbe:
 #            exec:
 #              command:
@@ -42,6 +76,19 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
 
+      {{- if or .Values.favicon.enabled .Values.logo.enabled }}
+      volumes:
+      {{- if .Values.favicon.enabled }}
+        - name: favicon
+          configMap:
+            name: {{ include "safe-wallet-web.fullname" . }}-favicon
+      {{- end }}
+      {{- if .Values.logo.enabled }}
+        - name: logo
+          configMap:
+            name: {{ include "safe-wallet-web.fullname" . }}-logo
+      {{- end }}
+      {{- end }}
       {{- with .Values.web.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

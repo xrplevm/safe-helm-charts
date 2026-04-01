@@ -1,0 +1,18 @@
+{{- if .Values.favicon.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "safe-wallet-web.fullname" . }}-favicon
+binaryData:
+  favicon.ico: {{ .Files.Get "files/favicon.ico" | b64enc }}
+  favicons-favicon.ico: {{ .Files.Get "files/favicons/favicon.ico" | b64enc }}
+  favicon-16x16.png: {{ .Files.Get "files/favicons/favicon-16x16.png" | b64enc }}
+  favicon-32x32.png: {{ .Files.Get "files/favicons/favicon-32x32.png" | b64enc }}
+  apple-touch-icon.png: {{ .Files.Get "files/favicons/apple-touch-icon.png" | b64enc }}
+  android-chrome-192x192.png: {{ .Files.Get "files/favicons/android-chrome-192x192.png" | b64enc }}
+  android-chrome-512x512.png: {{ .Files.Get "files/favicons/android-chrome-512x512.png" | b64enc }}
+data:
+  safari-pinned-tab.svg: |
+{{ .Files.Get "files/favicons/safari-pinned-tab.svg" | indent 4 }}
+{{- end }}

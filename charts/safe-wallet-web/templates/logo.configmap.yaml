@@ -1,0 +1,10 @@
+{{- if .Values.logo.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "safe-wallet-web.fullname" . }}-logo
+data:
+  logo.svg: |
+{{ .Files.Get "files/logo.svg" | indent 4 }}
+{{- end }}

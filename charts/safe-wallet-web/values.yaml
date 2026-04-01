@@ -30,13 +30,19 @@ config:
     projectId: ""
     bridge: ""
 
+favicon:
+  enabled: false
+
+logo:
+  enabled: false
+
 web:
   nodeSelector: {}
   affinity: {}
   tolerations: {}
   securityContext: {}
   podSecurityContext: {}
-  resources: {} 
+  resources: {}
 
 ingress:
   enabled: true
