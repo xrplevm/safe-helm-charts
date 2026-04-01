@@ -53,6 +53,10 @@ spec:
           volumeMounts:
             - name: gunicorn-volume
               mountPath: /nginx
+            {{- if .Values.media.persistence.enabled }}
+            - name: media-volume
+              mountPath: /app/src/media
+            {{- end }}
           {{- with .Values.web.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
@@ -93,6 +97,10 @@ spec:
               subPath: nginx.conf
             - name: gunicorn-volume
               mountPath: /nginx
+            {{- if .Values.media.persistence.enabled }}
+            - name: media-volume
+              mountPath: /app/src/media
+            {{- end }}
 
           {{- with .Values.web.securityContext }}
           securityContext:
@@ -112,6 +120,11 @@ spec:
         - name: nginx-volume
           configMap:
             name: {{ include "safe-config-service.fullname" . }}-nginx-config
+        {{- if .Values.media.persistence.enabled }}
+        - name: media-volume
+          persistentVolumeClaim:
+            claimName: {{ include "safe-config-service.fullname" . }}-media
+        {{- end }}
 
       {{- with .Values.web.nodeSelector }}
       nodeSelector:

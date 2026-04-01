@@ -51,7 +51,8 @@ web:
   affinity: {}
   tolerations: {}
   securityContext: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    fsGroup: 999
   resources: {}
     # requests: ## [TODO] crashing the pod ?
     #   memory: "1000Mi"
@@ -59,6 +60,12 @@ web:
     # limits:
     #   memory: "2000Mi"
     #   cpu: "300m"    
+
+media:
+  persistence:
+    enabled: true
+    storageClass: "standard"
+    size: 100Mi
 
 ingress:
   enabled: true

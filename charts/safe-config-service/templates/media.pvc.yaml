@@ -1,0 +1,17 @@
+{{- if .Values.media.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "safe-config-service.fullname" . }}-media
+  labels:
+    app: {{ include "safe-config-service.fullname" . }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.media.persistence.storageClass }}
+  storageClassName: {{ .Values.media.persistence.storageClass }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.media.persistence.size }}
+{{- end }}
