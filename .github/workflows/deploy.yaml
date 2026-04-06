@@ -99,8 +99,9 @@ jobs:
           kubectl config use-context peersyst-mainnet
           VALUES_FILE="values.yaml"
 
-          #helm -n safe upgrade production ./ \
-          #--install --atomic --wait --timeout 301s \
-          #--values values/${VALUES_FILE} \
-          #--set-string timestamp="${{ env.NOW }}" \
-          #--debug
+          helm -n safe upgrade production ./ \
+          --install --atomic --wait --timeout 301s \
+          --values values/${VALUES_FILE} \
+          --set-string timestamp="${{ env.NOW }}" \
+          --dry-run
+          --debug
