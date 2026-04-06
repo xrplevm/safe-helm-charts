@@ -1,0 +1,94 @@
+name: "Safe deployment"
+
+# Workflow dispatch to deploy on different environments
+on:
+  workflow_dispatch:
+
+permissions:
+  # Needed to configure aws credentials step
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      NOW: ${{ steps.env-vars.outputs.NOW }}
+    steps:
+      # Deploy only if GitHub Actor is admin
+      - name: Check user deployment permissions
+        shell: bash
+        run: |
+          PERMISSION=$(curl -s \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.actor }}/permission | jq -r .permission)
+
+          echo "Actor: ${{ github.actor }}"
+          echo "Permission: $PERMISSION"
+
+          if [ "$PERMISSION" != "admin" ]; then
+            echo "ERROR: Only repository admins can run deployments."
+            exit 1
+          fi
+
+      # Define global vars that will be used through the pipeline
+      - name: Defining global vars
+        shell: bash
+        id: env-vars
+        run: |
+          echo "NOW=$(TZ=':Europe/Madrid' date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_OUTPUT
+
+      # Checkout repository under $GITHUB_WORKSPACE path
+      - name: Repository checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      # Assume gitHubdeploymentsRole AWS role
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::291847425310:role/gitHubDeploymentsRoleSafe
+          role-session-name: deploymentsRoleSafe
+          role-duration-seconds: 900
+          aws-region: us-east-1
+
+      # Kubectl install
+      - uses: azure/setup-kubectl@v3
+        with:
+          version: ${{ vars.KUBECTL_VERSION }}
+
+      # Helm install
+      - uses: azure/setup-helm@v3
+        with:
+          version: ${{ vars.HELM_VERSION }}
+
+      # KUBECONFIG configuration
+      - name: KUBECONFIG configuration
+        shell: bash
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+        run: |
+          echo ${KUBECONFIG} | base64 --decode > kubeconfig.yaml
+          chmod 600 kubeconfig.yaml
+          echo ${GITHUB_WORKSPACE}
+          echo "KUBECONFIG=${GITHUB_WORKSPACE}/kubeconfig.yaml" >> $GITHUB_ENV
+
+      # Helm deployment
+      - name: Helm deployment
+        working-directory: ./charts
+        shell: bash
+        env:
+          NOW: ${{ steps.env-vars.outputs.NOW }}
+          KUBECONFIG: ${{ env.KUBECONFIG }}
+        run: |
+          kubectl config use-context peersyst-mainnet
+
+          #helm -n safe upgrade production ./ \
+          #--install --atomic --wait --timeout 301s \
+          #--values values/${VALUES_FILE} \
+          #--set-string timestamp="${{ env.NOW }}" \
+          #--debug
