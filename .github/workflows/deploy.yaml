@@ -59,12 +59,12 @@ jobs:
       # Kubectl install
       - uses: azure/setup-kubectl@v3
         with:
-          version: ${{ vars.KUBECTL_VERSION }}
+          version: v1.35.0
 
       # Helm install
       - uses: azure/setup-helm@v3
         with:
-          version: ${{ vars.HELM_VERSION }}
+          version: v3.20.0
 
       # KUBECONFIG configuration
       - name: KUBECONFIG configuration
