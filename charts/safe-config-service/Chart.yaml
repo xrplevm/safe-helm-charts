@@ -1,7 +1,7 @@
 apiVersion: v2
 name: safe-config-service
 version: 0.1.0
-appVersion: "v2.83.0"
+appVersion: "v2.91.0"
 description: A Helm chart to deploy safe-config-service
 keywords:
   - safe

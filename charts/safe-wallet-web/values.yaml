@@ -17,8 +17,8 @@ replicaCount: 1
 
 image:
   repository: safeglobal/safe-wallet-web
-  tag: latest
-  pullPolicy: Always
+  tag: v1.82.0  # GPL-3.0, newest matching CGW v1.101.0 (v1.83 polls relay status, v1.84+ needs /v2/chains)
+  pullPolicy: IfNotPresent
 
 extraEnv: []
 

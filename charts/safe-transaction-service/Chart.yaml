@@ -1,7 +1,7 @@
 apiVersion: v2
 name: safe-transaction-service
 version: 0.1.0
-appVersion: "v5.5.0"
+appVersion: "v5.42.1"
 description: A Helm chart to deploy safe-transaction-service
 keywords:
   - safe

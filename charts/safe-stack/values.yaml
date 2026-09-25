@@ -44,8 +44,8 @@ safe-transaction-service:
   replicaCount: 1
   image:
     repository: safeglobal/safe-transaction-service
-    tag: latest
-    pullPolicy: Always
+    tag: v5.42.1  # last MIT release (FSL-1.1-MIT from 2026-02-17)
+    pullPolicy: IfNotPresent
   extraEnv: []
   config:
     debug: false
@@ -179,8 +179,8 @@ safe-config-service:
   replicaCount: 1
   image:
     repository: safeglobal/safe-config-service
-    tag: latest
-    pullPolicy: Always
+    tag: v2.91.0  # last MIT release (FSL-1.1-MIT from 2026-02-17)
+    pullPolicy: IfNotPresent
   extraEnv: []
   config:
     debug: true
@@ -249,8 +249,8 @@ safe-client-gateway:
   replicaCount: 1
   image:
     repository: safeglobal/safe-client-gateway-nest
-    tag: latest
-    pullPolicy: Always
+    tag: v1.101.0  # last MIT release (FSL-1.1-MIT from 2026-02-17)
+    pullPolicy: IfNotPresent
   extraEnv: []
   config:
     debug: false
@@ -365,8 +365,8 @@ safe-wallet-web:
   image:
     # Official image (was gjeanmart/safe-wallet-web:force_safe_deployment)
     repository: safeglobal/safe-wallet-web
-    tag: latest
-    pullPolicy: Always
+    tag: v1.82.0  # GPL-3.0; newest matching CGW v1.101.0 (v1.83 polls relay status, v1.84+ needs /v2/chains)
+    pullPolicy: IfNotPresent
   extraEnv: []
   config:
     # Updated from 1.3.0 to 1.4.1 to match Docker Compose
@@ -402,8 +402,8 @@ safe-events-service:
   replicaCount: 1
   image:
     repository: safeglobal/safe-events-service
-    tag: latest
-    pullPolicy: Always
+    tag: v1.0.0  # last MIT release (FSL-1.1-MIT from 2026-02-17)
+    pullPolicy: IfNotPresent
   extraEnv: []
   config:
     database:

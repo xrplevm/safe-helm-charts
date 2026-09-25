@@ -17,8 +17,8 @@ replicaCount: 1
 
 image:
   repository: safeglobal/safe-events-service
-  tag: latest
-  pullPolicy: Always
+  tag: v1.0.0  # last MIT release (FSL-1.1-MIT from 2026-02-17)
+  pullPolicy: IfNotPresent
 
 extraEnv: []
 
