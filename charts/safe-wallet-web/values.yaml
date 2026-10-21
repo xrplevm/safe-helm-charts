@@ -1,4 +1,4 @@
-# Default values for safe-stack.
+# Default values for safe-wallet-web.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -15,26 +15,28 @@ imagePullSecrets: []
 
 replicaCount: 1
 
+## XRPL EVM Multisig: rebranded fork of safe-wallet-web v1.82.0 (GPL-3.0), built by the
+## "Build image" workflow of https://github.com/xrplevm/safe-wallet-web. The tag is the commit SHA.
+## Do not use safeglobal/safe-wallet-web: it ships the Safe trademarks.
 image:
-  repository: safeglobal/safe-wallet-web
-  tag: v1.82.0  # GPL-3.0, newest matching CGW v1.101.0 (v1.83 polls relay status, v1.84+ needs /v2/chains)
+  repository: ghcr.io/xrplevm/safe-wallet-web
+  ## Tag and digest: the tag shows the commit, the digest stops a re-push from changing what runs.
+  tag: be9d8cb034be25754fad92b04a9b923b8cda22f4@sha256:4c67803a42bf1fdf80c61a5bbb8432d8f010d1610fef49899e5a5441a73bf9cc  # branch 1.82.0
   pullPolicy: IfNotPresent
 
 extraEnv: []
 
 config:
-  safeVersion: "1.3.0"
+  safeVersion: "1.4.1+L2"
+  ## Chain selected when the app opens (XRPL EVM mainnet).
+  defaultChainId: "1440000"
+  ## Public origin of the app, used for link previews. Defaults to https://<ingress.host>.
+  appUrl: ""
   clientGateway:
     url: "https://cgw-service.minikube.net"
   walletConnect:
     projectId: ""
     bridge: ""
-
-favicon:
-  enabled: false
-
-logo:
-  enabled: false
 
 web:
   nodeSelector: {}

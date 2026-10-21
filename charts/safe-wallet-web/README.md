@@ -5,7 +5,7 @@
 
 ## Introduction
 
-This chart bootstraps a [safe-wallet-web](https://github.com/safe-global/safe-wallet-web) deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+This chart bootstraps an [XRPL EVM Multisig](https://github.com/xrplevm/safe-wallet-web) web app deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager. The app is a rebranded fork of safe-wallet-web without Safe trademarks. The image already contains the brand assets, so the chart does not mount logos or favicons.
 
 
 ## Prerequisites
@@ -74,10 +74,11 @@ helm show values safe-wallet-web
 
 | Parameter | Description | Default |
 |---|---|---|
+| `imagePullSecrets` | Pull secrets for a private image registry | `[]` |
 | `replicaCount` | Number of instance for safe-wallet-web | `1` |
-| `image.repository` | safe-wallet-web  image name | `safeglobal/safe-wallet-web` |
-| `image.tag` | safe-wallet-web image tag | `latest` |
-| `image.pullPolicy` | Image pull policy | `Always` |
+| `image.repository` | Web app image name | `ghcr.io/xrplevm/safe-wallet-web` |
+| `image.tag` | Web app image tag (commit SHA of the `1.82.0` branch, pinned by digest) | `be9d8cb034be25754fad92b04a9b923b8cda22f4@sha256:4c67803a42bf1fdf80c61a5bbb8432d8f010d1610fef49899e5a5441a73bf9cc` |
+| `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `extraEnv` | Specify additional environment variables | `[]` |
 
 ### Configuration parameters
@@ -86,6 +87,9 @@ helm show values safe-wallet-web
 |---|---|---|
 | `config.debug` | Enable debug mode | `true` |
 | `config.clientGateway.url` | URL of the Client-Gateway | `""` |
+| `config.safeVersion` | Safe contract version used for new accounts | `1.4.1+L2` |
+| `config.defaultChainId` | Chain selected when the app opens. `extraEnvVars.NEXT_PUBLIC_DEFAULT_MAINNET_CHAIN_ID` takes precedence | `1440000` |
+| `config.appUrl` | Public origin of the app, used for link previews | `https://<ingress.host>` |
 | `config.walletConnect.projectId` | Wallet-Connect project ID | `""` |
 | `config.walletConnect.bridge` | Wallet-Connect Bridge | `""` |
 
