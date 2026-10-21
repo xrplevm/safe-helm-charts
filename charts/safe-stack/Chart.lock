@@ -10,12 +10,12 @@ dependencies:
   version: 0.2.0
 - name: safe-wallet-web
   repository: file://../safe-wallet-web
-  version: 0.2.0
+  version: 0.2.1
 - name: safe-events-service
   repository: file://../safe-events-service
   version: 0.1.0
 - name: rabbitmq
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 14.6.5
-digest: sha256:37720d1019f5d89be7cadb37ac839c888cdb96a4d80ff8db34d93cad398192e8
-generated: "2026-10-21T17:34:53.449277503+02:00"
+digest: sha256:0ed4c6a845a118f2deecaa549663ef18a0d31118807b95d3fec09a0b213bbf02
+generated: "2026-10-21T19:37:53.486206338+02:00"

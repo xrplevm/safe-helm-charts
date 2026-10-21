@@ -77,7 +77,7 @@ helm show values safe-wallet-web
 | `imagePullSecrets` | Pull secrets for a private image registry | `[]` |
 | `replicaCount` | Number of instance for safe-wallet-web | `1` |
 | `image.repository` | Web app image name | `ghcr.io/xrplevm/safe-wallet-web` |
-| `image.tag` | Web app image tag (commit SHA of the `1.82.0` branch, pinned by digest) | `be9d8cb034be25754fad92b04a9b923b8cda22f4@sha256:4c67803a42bf1fdf80c61a5bbb8432d8f010d1610fef49899e5a5441a73bf9cc` |
+| `image.tag` | Web app image tag (commit SHA of the `1.82.0` branch, pinned by digest) | `320d73311b330ee797d57c9ac8ac08befec224cf@sha256:001ee562646d8749160fbaa6d6cc01581af39afdd9be298bcd7d77b67740c04c` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `extraEnv` | Specify additional environment variables | `[]` |
 | `extraEnvVars` | Extra variables in the env ConfigMap. `NEXT_PUBLIC_DEFAULT_MAINNET_CHAIN_ID` and `NEXT_PUBLIC_APP_URL` here take precedence over `config.defaultChainId` and `config.appUrl` | `{}` |

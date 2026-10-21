@@ -15,13 +15,14 @@ imagePullSecrets: []
 
 replicaCount: 1
 
-## XRPL EVM Multisig: rebranded fork of safe-wallet-web v1.82.0 (GPL-3.0), built by the
+## XRPL EVM Multisig: rebranded fork of safe-wallet-web (GPL-3.0), built by the
 ## "Build image" workflow of https://github.com/xrplevm/safe-wallet-web. The tag is the commit SHA.
+## The fork branch is named 1.82.0, but it is upstream v1.81.0 plus upstream dev commits, not the v1.82.0 release.
 ## Do not use safeglobal/safe-wallet-web: it ships the Safe trademarks.
 image:
   repository: ghcr.io/xrplevm/safe-wallet-web
   ## Tag and digest: the tag shows the commit, the digest stops a re-push from changing what runs.
-  tag: be9d8cb034be25754fad92b04a9b923b8cda22f4@sha256:4c67803a42bf1fdf80c61a5bbb8432d8f010d1610fef49899e5a5441a73bf9cc  # branch 1.82.0
+  tag: 320d73311b330ee797d57c9ac8ac08befec224cf@sha256:001ee562646d8749160fbaa6d6cc01581af39afdd9be298bcd7d77b67740c04c  # branch 1.82.0
   pullPolicy: IfNotPresent
 
 extraEnv: []

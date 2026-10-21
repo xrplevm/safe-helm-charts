@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 0.2.1
+
+### Fixes
+
+- Use image commit `320d733` (digest `sha256:001ee562646d…`). The footer no longer links to `releases/tag/v1.81.0`, a release that does not exist.
+
 ## 0.2.0
 
 ### Features

@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 0.2.1
+
+### Fixes
+
+- Use `safe-wallet-web` chart 0.2.1: the footer no longer links to a release that does not exist.
+
 ## 0.2.0
 
 ### Features
