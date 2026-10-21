@@ -23,11 +23,11 @@ dependencies:
   repository: "file://../safe-transaction-service"
   condition: safe-transaction-service.enabled
 - name: safe-config-service
-  version: "0.1.0"
+  version: "0.2.0"
   repository: "file://../safe-config-service"
   condition: safe-config-service.enabled
 - name: safe-client-gateway
-  version: "0.1.0"
+  version: "0.2.0"
   repository: "file://../safe-client-gateway"
   condition: safe-client-gateway.enabled
 - name: safe-wallet-web

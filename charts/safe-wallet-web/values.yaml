@@ -26,11 +26,15 @@ image:
 
 extraEnv: []
 
+## Extra variables added to the env ConfigMap. NEXT_PUBLIC_DEFAULT_MAINNET_CHAIN_ID and
+## NEXT_PUBLIC_APP_URL here take precedence over config.defaultChainId and config.appUrl.
+extraEnvVars: {}
+
 config:
   safeVersion: "1.4.1+L2"
   ## Chain selected when the app opens (XRPL EVM mainnet).
   defaultChainId: "1440000"
-  ## Public origin of the app, used for link previews. Defaults to https://<ingress.host>.
+  ## Public origin of the app, used for link previews. Defaults to https://<ingress.host> when ingress is enabled.
   appUrl: ""
   clientGateway:
     url: "https://cgw-service.minikube.net"
@@ -45,6 +49,13 @@ web:
   securityContext: {}
   podSecurityContext: {}
   resources: {}
+
+## HTTP basic auth in an nginx sidecar in front of the app. It works with any ingress class (ALB, nginx).
+## /healthz stays open for load balancer health checks: 200 when the app answers /welcome, 500 when not.
+basicAuth:
+  enabled: false
+  user: ""
+  password: ""
 
 ingress:
   enabled: true

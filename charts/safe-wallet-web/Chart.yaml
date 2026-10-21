@@ -12,3 +12,6 @@ home: https://github.com/xrplevm/safe-wallet-web
 sources:
   - https://github.com/xrplevm/safe-helm-charts/tree/main/charts/safe-wallet-web
   - https://github.com/xrplevm/safe-wallet-web
+maintainers:
+  - name: Kevin Pita
+    email: kpita@peersyst.com

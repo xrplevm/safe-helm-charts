@@ -1,0 +1,37 @@
+{{- if .Values.basicAuth.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "safe-wallet-web.fullname" . }}-nginx-basic-auth
+data:
+  default.conf: |
+    server {
+        listen 8080;
+        auth_basic "Restricted";
+        auth_basic_user_file /etc/nginx/auth/auth;
+
+        # Load balancer health check: no login, no page content, 200 only when the app answers.
+        location = /healthz {
+            auth_basic off;
+            access_log off;
+            auth_request /_app_health;
+            empty_gif;
+        }
+
+        location = /_app_health {
+            internal;
+            proxy_pass http://127.0.0.1:3000/welcome;
+            proxy_pass_request_body off;
+            proxy_set_header Content-Length "";
+        }
+
+        location / {
+            proxy_pass http://127.0.0.1:3000;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+        }
+    }
+{{- end }}

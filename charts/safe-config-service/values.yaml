@@ -31,7 +31,8 @@ config:
     trustedOrigins: "https://safe-wallet.minikube.net"
   clientGateway:
     url: "http://cgw-service-safe-client-gateway-web"
-    token: "1234567890"  # change me (should be the same as client-gateway.auth.token)
+    ## Required. Must equal the client gateway config.security.authToken. Keep it out of git.
+    token: ""
   database:
     runMigration: true
     host: # leave empty if safe-config-service-postgresql.enabled=true
@@ -74,6 +75,20 @@ ingress:
   annotations: 
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/enable-cors: "false"
+  ## Paths routed to the service. Remove /admin and /api to keep them private.
+  paths:
+    - path: /
+      pathType: Exact
+    - path: /api
+      pathType: Prefix
+    - path: /static
+      pathType: Prefix
+    - path: /media
+      pathType: Prefix
+    - path: /check
+      pathType: Prefix
+    - path: /admin
+      pathType: Prefix
   tls:
     enabled: false
     #host: 

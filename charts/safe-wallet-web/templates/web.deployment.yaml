@@ -45,6 +45,26 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+        {{- if .Values.basicAuth.enabled }}
+        - name: nginx-basic-auth
+          image: nginx:alpine
+          ports:
+            - name: auth
+              containerPort: 8080
+          volumeMounts:
+            - name: nginx-basic-auth-config
+              mountPath: /etc/nginx/conf.d
+            - name: nginx-basic-auth-users
+              mountPath: /etc/nginx/auth
+              readOnly: true
+      volumes:
+        - name: nginx-basic-auth-config
+          configMap:
+            name: {{ include "safe-wallet-web.fullname" . }}-nginx-basic-auth
+        - name: nginx-basic-auth-users
+          secret:
+            secretName: {{ include "safe-wallet-web.fullname" . }}-basic-auth
+        {{- end }}
 
       {{- with .Values.web.nodeSelector }}
       nodeSelector:

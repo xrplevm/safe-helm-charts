@@ -90,7 +90,7 @@ helm show values safe-config-service
 | `config.secretKey` | Django secret key | `""` |
 | `config.csrf.trustedOrigins` | Trusted origins should refer to safe-wallet-web URL | `""` |
 | `config.clientGateway.url` | URL of the Client-Gateway | `""` |
-| `config.clientGateway.token` | Client-Gateway flush token | `""` |
+| `config.clientGateway.token` | Required. Client-Gateway auth token, the same value as the gateway `config.security.authToken` | `""` |
 | `config.database.runMigration` | Run Database migration on startup | `true` |
 | `config.database.host` | Database Host<br>if `safe-config-service-postgresql.enabled=false` | `""` |
 | `config.database.port` | Database Port<br>if `safe-config-service-postgresql.enabled=false` | `""` |
@@ -121,6 +121,7 @@ helm show values safe-config-service
 | `ingress.ingressClassName` | Ingress class name | `nginx` |
 | `ingress.host` | Ingress host | `cgw-service.minikube.net` |
 | `ingress.annotations` | Ingress annotations | <pre>nginx.ingress.kubernetes.io/force-ssl-redirect: "true"<br>nginx.ingress.kubernetes.io/enable-cors: "false"</pre> |
+| `ingress.paths` | Paths that the ingress routes, each with `path` and `pathType`. Remove `/admin` and `/api` to keep them private | `/` (Exact), `/api`, `/static`, `/media`, `/check`, `/admin` (Prefix) |
 
 ### Database parameters
 

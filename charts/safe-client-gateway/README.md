@@ -91,7 +91,7 @@ helm show values safe-client-gateway
 |---|---|---|
 | `config.debug` | Enable debug mode | `true` |
 | `config.cfgService.url` | URL of the Config-Service | `""` |
-| `config.security.authToken` | Authentication token | `""` |
+| `config.security.authToken` | Required. Token that guards `POST /v1/hooks/events`. Use a random secret and keep it out of git | `""` |
 | `config.redis.host` | Redis Host<br>if `safe-client-gateway-redis.enabled=false` | `""` |
 | `config.redis.port` | Redis Port | `6379` |
 

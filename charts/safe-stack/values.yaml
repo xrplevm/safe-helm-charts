@@ -115,7 +115,8 @@ safe-transaction-service:
         memory: "2000Mi"
         cpu: "1000m"
   ingress:
-    enabled: true
+    ## Off: the browser does not call this service, and its /admin must not be reachable through the ingress controller.
+    enabled: false
     ingressClassName: nginx
     host: txs-service.minikube.net
     annotations:
@@ -190,8 +191,9 @@ safe-config-service:
       trustedOrigins: "http://localhost:8000"
     clientGateway:
       url: "http://safe-stack-safe-client-gateway-web"
-      # Docker Compose uses CGW_AUTH_TOKEN (template updated from CGW_FLUSH_TOKEN)
-      token: "1234567890"
+      ## Required. Same value as safe-client-gateway.config.security.authToken.
+      ## Set it in values-mainnet.yaml (git-ignored), never here.
+      token: ""
     database:
       runMigration: true
       host: # leave empty if postgresql.enabled=true
@@ -216,6 +218,10 @@ safe-config-service:
     enabled: true
     ingressClassName: nginx
     host: cfg-service.minikube.net
+    ## Only /media: the chain logos that the wallet loads. Admin and API stay private: use kubectl port-forward.
+    paths:
+      - path: /media
+        pathType: Prefix
     annotations:
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/enable-cors: "false"
@@ -257,7 +263,9 @@ safe-client-gateway:
     cfgService:
       url: "http://safe-stack-safe-config-service-web"
     security:
-      authToken: "1234567890"
+      ## Required. Guards POST /v1/hooks/events on the public gateway. Use a random secret
+      ## (openssl rand -hex 32) and set it in values-mainnet.yaml (git-ignored), never here.
+      authToken: ""
     redis:
       host: # leave empty, uses bitnami redis subchart
       port: 6379
@@ -418,7 +426,8 @@ safe-events-service:
     podSecurityContext: {}
     resources: {}
   ingress:
-    enabled: true
+    ## Off: the browser does not call this service, and its admin must not be reachable through the ingress controller.
+    enabled: false
     ingressClassName: nginx
     host: events-service.minikube.net
     annotations:

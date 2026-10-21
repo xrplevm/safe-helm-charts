@@ -24,47 +24,14 @@ spec:
     - host: "{{ .Values.ingress.host }}"
       http:
         paths:
-        - path: /
-          pathType: 'Exact'
+        {{- range .Values.ingress.paths }}
+        - path: {{ .path }}
+          pathType: {{ .pathType | quote }}
           backend:
             service:
-              name: {{ include "safe-config-service.fullname" . }}-web
+              name: {{ include "safe-config-service.fullname" $ }}-web
               port:
                 number: 80
-        - path: /api
-          pathType: 'Prefix'
-          backend:
-            service:
-              name: {{ include "safe-config-service.fullname" . }}-web
-              port:
-                number: 80
-        - path: /static
-          pathType: 'Prefix'
-          backend:
-            service:
-              name: {{ include "safe-config-service.fullname" . }}-web
-              port:
-                number: 80
-        - path: /media
-          pathType: 'Prefix'
-          backend:
-            service:
-              name: {{ include "safe-config-service.fullname" . }}-web
-              port:
-                number: 80
-        - path: /check
-          pathType: 'Prefix'
-          backend:
-            service:
-              name: {{ include "safe-config-service.fullname" . }}-web
-              port:
-                number: 80
-        - path: /admin
-          pathType: 'Prefix'
-          backend:
-            service:
-              name: {{ include "safe-config-service.fullname" . }}-web
-              port:
-                number: 80
+        {{- end }}
 ---
 {{- end }}

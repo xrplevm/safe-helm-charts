@@ -34,7 +34,8 @@ config:
   txService:
     url: "http://transaction-service-safe-transaction-service-web"
   security:
-    authToken: "1234567890"
+    ## Required. Guards POST /v1/hooks/events. Use a random secret and keep it out of git.
+    authToken: ""
   redis:
     host: # leave empty unless safe-client-gateway-redis.enabled=true
     port: 6379

@@ -80,6 +80,7 @@ helm show values safe-wallet-web
 | `image.tag` | Web app image tag (commit SHA of the `1.82.0` branch, pinned by digest) | `be9d8cb034be25754fad92b04a9b923b8cda22f4@sha256:4c67803a42bf1fdf80c61a5bbb8432d8f010d1610fef49899e5a5441a73bf9cc` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `extraEnv` | Specify additional environment variables | `[]` |
+| `extraEnvVars` | Extra variables in the env ConfigMap. `NEXT_PUBLIC_DEFAULT_MAINNET_CHAIN_ID` and `NEXT_PUBLIC_APP_URL` here take precedence over `config.defaultChainId` and `config.appUrl` | `{}` |
 
 ### Configuration parameters
 
@@ -88,8 +89,8 @@ helm show values safe-wallet-web
 | `config.debug` | Enable debug mode | `true` |
 | `config.clientGateway.url` | URL of the Client-Gateway | `""` |
 | `config.safeVersion` | Safe contract version used for new accounts | `1.4.1+L2` |
-| `config.defaultChainId` | Chain selected when the app opens. `extraEnvVars.NEXT_PUBLIC_DEFAULT_MAINNET_CHAIN_ID` takes precedence | `1440000` |
-| `config.appUrl` | Public origin of the app, used for link previews | `https://<ingress.host>` |
+| `config.defaultChainId` | Chain selected when the app opens. A non-empty `extraEnvVars.NEXT_PUBLIC_DEFAULT_MAINNET_CHAIN_ID` takes precedence | `1440000` |
+| `config.appUrl` | Public origin of the app, used for link previews. Required when ingress is disabled or has no host | `https://<ingress.host>` |
 | `config.walletConnect.projectId` | Wallet-Connect project ID | `""` |
 | `config.walletConnect.bridge` | Wallet-Connect Bridge | `""` |
 
@@ -104,13 +105,23 @@ helm show values safe-wallet-web
 | `web.podSecurityContext` |  | `{}` |
 | `web.resources` |  | `{}` |
 
+### Basic auth parameters
+
+An nginx sidecar asks for a login before it proxies to the app. It works with any ingress class. `/healthz` stays open for load balancer health checks and returns `200` only when the app answers `/welcome`.
+
+| Parameter | Description | Default |
+|---|---|---|
+| `basicAuth.enabled` | Run the nginx basic auth sidecar. The Service then targets port `8080` | `false` |
+| `basicAuth.user` | Basic auth user name | `""` |
+| `basicAuth.password` | Basic auth password | `""` |
+
 ### Ingress parameters
 
 | Parameter | Description | Default |
 |---|---|---|
 | `ingress.enabled` | Enable ingress | `true` |
 | `ingress.ingressClassName` | Ingress class name | `nginx` |
-| `ingress.host` | Ingress host | `cgw-service.minikube.net` |
+| `ingress.host` | Ingress host | `safe-wallet.minikube.net` |
 | `ingress.annotations` | Ingress annotations | <pre>nginx.ingress.kubernetes.io/force-ssl-redirect: "true"<br/>nginx.ingress.kubernetes.io/enable-cors: "false"</pre> |
 
 
