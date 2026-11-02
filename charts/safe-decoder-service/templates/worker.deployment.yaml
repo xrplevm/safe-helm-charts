@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: {{ include "safe-decoder-service.fullname" . }}-worker
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "safe-decoder-service.fullname" . }}-worker
+  template:
+    metadata:
+      labels:
+        app: {{ include "safe-decoder-service.fullname" . }}-worker
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        # Dramatiq tasks and the periodiq scheduler, for example the hourly Safe contracts update
+        - name: worker
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["docker/web/dramatiq/worker/run.sh"]
+          envFrom:
+            - configMapRef:
+                name: {{ include "safe-decoder-service.fullname" . }}-env
+            - secretRef:
+                name: {{ include "safe-decoder-service.fullname" . }}-env
+          {{- with .Values.worker.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.worker.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+      {{- with .Values.worker.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.worker.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.worker.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.worker.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---

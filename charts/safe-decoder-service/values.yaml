@@ -1,0 +1,86 @@
+# Default values for safe-decoder-service.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Provide a name in place of safe-decoder-service for `app:` labels
+##
+nameOverride: ""
+## Provide a name to substitute for the full names of resources
+##
+fullnameOverride: ""
+## Reference to one or more secrets to be used when pulling images
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+##
+imagePullSecrets: []
+
+replicaCount: 1
+
+image:
+  repository: safeglobal/safe-decoder-service
+  tag: v1.12.0  # last MIT release (FSL-1.1-MIT from 2026-02-17)
+  pullPolicy: IfNotPresent
+
+config:
+  logLevel: "INFO"
+  ## Required. Signs the admin login tokens. Use a random secret (openssl rand -hex 32).
+  secretKey: ""
+  admin:
+    username: "admin"
+    ## Required. The service has no admin password by default.
+    password: ""
+  database:
+    url: # leave empty if safe-decoder-service-postgresql.enabled=true (e.g postgresql+asyncpg://user:pw@host:5432/db)
+  redis:
+    url: # leave empty if safe-decoder-service-redis.enabled=true (e.g redis://host:6379/0)
+  amqp:
+    url: "" # e.g. amqp://guest:guest@rabbitmq:5672/
+    exchange: "safe-transaction-service-events"
+    queue: "safe-decoder-service"
+
+web:
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+  securityContext: {}
+  podSecurityContext: {}
+  resources: {}
+
+worker:
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+  securityContext: {}
+  podSecurityContext: {}
+  resources: {}
+
+safe-decoder-service-redis:
+  enabled: true
+  # Bitnami removed its tags from docker.io/bitnami. The chart default tag still exists in bitnamilegacy.
+  image:
+    repository: bitnamilegacy/redis
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: true
+      storageClass: "standard"
+      size: 100Mi
+  replica:
+    replicaCount: 0
+
+safe-decoder-service-postgresql:
+  enabled: true
+  image:
+    repository: bitnamilegacy/postgresql
+  global:
+    postgresql:
+      auth:
+        username: postgres
+        ## Required. Anyone with database access can change the trusted contracts.
+        password: ""
+        database: postgres
+  primary:
+    persistence:
+      enabled: true
+      storageClass: "standard"
+      size: 100Mi

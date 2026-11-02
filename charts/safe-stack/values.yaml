@@ -20,7 +20,7 @@ imagePullSecrets: []
 ## ---------------------------------------------------------------------------
 ## GENERAL RABBITMQ (inter-service event bus)
 ## Docker Compose equivalent: general-rabbitmq
-## Used by: txs-service (EVENTS_QUEUE_URL), events-service (AMQP_URL)
+## Used by: txs-service (EVENTS_QUEUE_URL), events-service (AMQP_URL), decoder-service (RABBITMQ_AMQP_URL)
 ## ---------------------------------------------------------------------------
 ##
 general-rabbitmq:
@@ -307,6 +307,10 @@ safe-client-gateway:
     RELAY_PROVIDER_API_KEY_UNICHAIN: ""
     # Push Notifications
     PUSH_NOTIFICATIONS_API_BASE_URI: "https://fcm.googleapis.com/v1/projects"
+    # DELEGATECALL proposals (batches) are accepted only if safe-decoder-service marks the target as trusted
+    FF_TRUSTED_DELEGATE_CALL: "true"
+    # Our decoder, not Safe's public one: Safe's has no XRPL EVM contracts and its redirect drops the chain filter
+    SAFE_DATA_DECODER_BASE_URI: "http://safe-stack-safe-decoder-service-web"
   web:
     nodeSelector: {}
     affinity: {}
@@ -446,6 +450,77 @@ safe-events-service:
         auth:
           username: postgres
           password: postgres
+          database: postgres
+    primary:
+      persistence:
+        enabled: true
+        storageClass: "standard"
+        size: 100Mi
+
+##
+## ---------------------------------------------------------------------------
+## DECODER-SERVICE CONFIGURATION
+## Used by: cgw-service (SAFE_DATA_DECODER_BASE_URI) to decode transaction data
+## and to find the contracts trusted for DELEGATECALL
+## ---------------------------------------------------------------------------
+##
+safe-decoder-service:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: safeglobal/safe-decoder-service
+    tag: v1.12.0  # last MIT release (FSL-1.1-MIT from 2026-02-17)
+    pullPolicy: IfNotPresent
+  config:
+    ## Required. Set both in the deployment values (git-ignored), never here.
+    secretKey: ""
+    admin:
+      username: "admin"
+      password: ""
+    amqp:
+      # Points to the general-rabbitmq (shared event bus)
+      url: "amqp://guest:guest@safe-stack-general-rabbitmq:5672/"
+      exchange: "safe-transaction-service-events"
+      queue: "safe-decoder-service"
+  web:
+    nodeSelector: {}
+    affinity: {}
+    tolerations: {}
+    securityContext: {}
+    podSecurityContext: {}
+    resources: {}
+  worker:
+    nodeSelector: {}
+    affinity: {}
+    tolerations: {}
+    securityContext: {}
+    podSecurityContext: {}
+    resources: {}
+  safe-decoder-service-redis:
+    enabled: true
+    # Bitnami removed its tags from docker.io/bitnami. The chart default tag still exists in bitnamilegacy.
+    image:
+      repository: bitnamilegacy/redis
+    auth:
+      enabled: false
+    master:
+      persistence:
+        enabled: true
+        storageClass: "standard"
+        size: 100Mi
+    replica:
+      replicaCount: 0
+  safe-decoder-service-postgresql:
+    enabled: true
+    image:
+      repository: bitnamilegacy/postgresql
+    global:
+      postgresql:
+        auth:
+          username: postgres
+          ## Required. Set it in the deployment values (git-ignored), never here.
+          ## Anyone with database access can change the trusted contracts.
+          password: ""
           database: postgres
     primary:
       persistence:

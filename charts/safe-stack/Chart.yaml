@@ -1,6 +1,6 @@
 apiVersion: v2
 name: safe-stack
-version: 0.2.1
+version: 0.3.0
 appVersion: "2024-07-24_001"
 description: A Helm chart to deploy the full Safe{Stack} inclusing txs-service, cfg-service, cgw-service and wallet-web
 keywords:
@@ -38,6 +38,10 @@ dependencies:
   version: "0.1.0"
   repository: "file://../safe-events-service"
   condition: safe-events-service.enabled
+- name: safe-decoder-service
+  version: "0.1.0"
+  repository: "file://../safe-decoder-service"
+  condition: safe-decoder-service.enabled
 - name: rabbitmq
   version: "14.6.5"
   repository: "oci://registry-1.docker.io/bitnamicharts"

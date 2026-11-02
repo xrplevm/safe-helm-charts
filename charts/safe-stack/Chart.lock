@@ -14,8 +14,11 @@ dependencies:
 - name: safe-events-service
   repository: file://../safe-events-service
   version: 0.1.0
+- name: safe-decoder-service
+  repository: file://../safe-decoder-service
+  version: 0.1.0
 - name: rabbitmq
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 14.6.5
-digest: sha256:0ed4c6a845a118f2deecaa549663ef18a0d31118807b95d3fec09a0b213bbf02
-generated: "2026-10-21T19:37:53.486206338+02:00"
+digest: sha256:a706fe8d02092303f47307f445b3e8d173851fef28c3fece4c8a9b5c2cbcd924
+generated: "2026-11-02T12:54:52.906469853+01:00"

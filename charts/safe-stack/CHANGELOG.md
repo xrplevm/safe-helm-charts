@@ -1,5 +1,16 @@
 # ChangeLog
 
+## 0.3.0
+
+### Features
+
+- Add `safe-decoder-service` chart 0.1.0 (v1.12.0). Configure trusted contracts through its admin page after deployment.
+- Point the gateway to it with `SAFE_DATA_DECODER_BASE_URI`, and set `FF_TRUSTED_DELEGATE_CALL=true`. Batch proposals remain blocked until their target contracts are marked trusted in the decoder.
+
+### Breaking changes
+
+- Set `safe-decoder-service.config.secretKey`, `safe-decoder-service.config.admin.password` and `safe-decoder-service.safe-decoder-service-postgresql.global.postgresql.auth.password` in the deployment values. The render fails without them.
+
 ## 0.2.1
 
 ### Fixes
