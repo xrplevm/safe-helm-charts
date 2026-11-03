@@ -10,7 +10,10 @@ dependencies:
   version: 0.2.0
 - name: safe-wallet-web
   repository: file://../safe-wallet-web
-  version: 0.2.3
+  version: 0.3.0
+- name: safe-tx-builder
+  repository: file://../safe-tx-builder
+  version: 0.1.0
 - name: safe-events-service
   repository: file://../safe-events-service
   version: 0.1.0
@@ -20,5 +23,5 @@ dependencies:
 - name: rabbitmq
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 14.6.5
-digest: sha256:ecb26e9527b180c72a4775e5af657d3b7f473236e09cb04e00fd3be7b4fb2672
-generated: "2026-11-03T01:59:15.352592669+01:00"
+digest: sha256:bd1d2717f2f866c885b4749e242bc5e09f6fc1dd38f90253a2fcec664ed70c3c
+generated: "2026-11-03T13:33:21.774498696+01:00"

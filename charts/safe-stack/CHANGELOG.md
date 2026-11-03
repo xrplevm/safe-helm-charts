@@ -1,5 +1,13 @@
 # ChangeLog
 
+## 0.4.0
+
+### Features
+
+- Add `safe-tx-builder` chart 0.1.0 on `tx-builder.minikube.net`, and derive the wallet's builder URL from the enabled builder's ingress host (`safe-wallet-web` chart 0.3.0). Disabling the builder clears the derived URL. Explicit wallet URL overrides still work for external builders. After deployment, add the app in the config service admin to avoid the "unknown app" warning.
+- Pin the builder image to commit `e7c554c` and digest `sha256:4ce371031be7…`. No builder image override is needed for the default deployment. The wallet image is unchanged.
+- Allow the gateway CORS sidecar to serve both wallet and builder origins, and restart gateway pods when its CORS configuration changes.
+
 ## 0.3.2
 
 ### Fixes

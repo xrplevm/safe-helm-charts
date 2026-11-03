@@ -115,6 +115,32 @@ helm show values safe-client-gateway
 | `ingress.host` | Ingress host | `cgw-service.minikube.net` |
 | `ingress.annotations` | Ingress annotations | <pre>nginx.ingress.kubernetes.io/force-ssl-redirect: "true"<br>nginx.ingress.kubernetes.io/enable-cors: "true"<br>nginx.ingress.kubernetes.io/cors-allow-methods: "OPTIONS, GET, HEAD, DELETE, PUT, POST"<br>nginx.ingress.kubernetes.io/cors-allow-origin: "https://*.minikube.net"<br>nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,Safe-Wallet-Signature,Safe-Wallet-Signature-Timestamp"</pre> |
 
+### CORS sidecar parameters
+
+| Parameter | Description | Default |
+|---|---|---|
+| `cors.enabled` | Enable the nginx CORS sidecar | `true` |
+| `cors.allowOrigins` | One origin string or a YAML list of origins | `"https://*.minikube.net"` |
+
+The sidecar returns the matching request origin in `Access-Control-Allow-Origin` for preflight and normal responses.
+Disallowed origins receive no `Access-Control-Allow-Origin` header.
+Responses include `Vary: Origin` so caches distinguish request origins.
+Existing scalar values remain supported, including `"*"` to allow any origin.
+A wildcard such as `https://*.minikube.net` matches one subdomain label.
+Only HTTP and HTTPS origins support this subdomain wildcard. Other wildcard patterns and regular expressions are not supported.
+
+For the standalone chart, configure multiple origins as a YAML list:
+
+```yaml
+cors:
+  allowOrigins:
+    - https://multisig.xrplevm.org
+    - https://multisig-txbuilder.xrplevm.org
+```
+
+For `safe-stack`, nest `cors` under `safe-client-gateway`.
+Ingress CORS annotations are separate from the sidecar configuration. If ingress CORS is enabled, its allowlist must also allow these origins.
+
 ### Redis parameters
 
 | Parameter | Description | Default |

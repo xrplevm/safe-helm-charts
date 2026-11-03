@@ -62,6 +62,14 @@ helm install [RELEASE-NAME] safe/safe-wallet-web
 
 For more information, please checkout the chart level [README.md](./charts/safe-wallet-web/README.md).
 
+### [safe/safe-tx-builder](./charts/safe-tx-builder/)
+
+```bash
+helm install [RELEASE-NAME] safe/safe-tx-builder
+```
+
+For more information, please checkout the chart level [README.md](./charts/safe-tx-builder/README.md).
+
 
 ### [safe/safe-stack](./charts/safe-stack/)
 

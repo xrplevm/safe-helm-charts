@@ -1,0 +1,16 @@
+apiVersion: v2
+name: safe-tx-builder
+version: 0.1.0
+appVersion: "e7c554c"
+description: A Helm chart to deploy the Transaction Builder app of the XRPL EVM Multisig wallet, from the rebranded safe-wallet-web fork
+keywords:
+  - web3
+  - wallet
+  - smart-account
+home: https://github.com/xrplevm/safe-wallet-web
+sources:
+  - https://github.com/xrplevm/safe-helm-charts/tree/main/charts/safe-tx-builder
+  - https://github.com/xrplevm/safe-wallet-web/tree/1.82.0/apps/tx-builder
+maintainers:
+  - name: Kevin Pita
+    email: kpita@peersyst.com

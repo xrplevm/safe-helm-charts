@@ -15,6 +15,9 @@ imagePullSecrets: []
 
 replicaCount: 1
 
+## Internal: safe-stack renders the wallet ConfigMap and Deployment with its resolved builder URL.
+parentManaged: false
+
 ## XRPL EVM Multisig: rebranded fork of safe-wallet-web (GPL-3.0), built by the
 ## "Build image" workflow of https://github.com/xrplevm/safe-wallet-web. The tag is the commit SHA.
 ## The fork branch is named 1.82.0, but it is upstream v1.81.0 plus upstream dev commits, not the v1.82.0 release.
@@ -37,6 +40,8 @@ config:
   defaultChainId: "1440000"
   ## Public origin of the app, used for link previews. Defaults to https://<ingress.host> when ingress is enabled.
   appUrl: ""
+  ## URL of the Transaction Builder app (safe-tx-builder chart). Empty: its links open the app list.
+  txBuilderUrl: ""
   clientGateway:
     url: "https://cgw-service.minikube.net"
   walletConnect:

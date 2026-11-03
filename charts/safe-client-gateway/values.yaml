@@ -74,6 +74,7 @@ ingress:
 
 cors:
   enabled: true
+  # One origin or a YAML list. Scalar "*" allows any origin; https://*.host matches one subdomain.
   allowOrigins: "https://*.minikube.net"
 
 safe-client-gateway-redis:

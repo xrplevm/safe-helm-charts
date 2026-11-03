@@ -1,4 +1,10 @@
 {{- if .Values.cors.enabled }}
+{{- $origins := .Values.cors.allowOrigins }}
+{{- $allowAnyOrigin := false }}
+{{- if kindIs "string" $origins }}
+{{- $allowAnyOrigin = eq $origins "*" }}
+{{- $origins = list $origins }}
+{{- end }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -6,13 +12,28 @@ metadata:
   name: {{ include "safe-client-gateway.fullname" . }}-nginx-cors
 data:
   default.conf: |
+    map $http_origin $cors_allow_origin {
+        {{- if $allowAnyOrigin }}
+        default "*";
+        {{- else }}
+        default "";
+        {{- range $origins }}
+        {{- $pattern := regexQuoteMeta . }}
+        {{- if regexMatch "^https?://\\*\\.[A-Za-z0-9.-]+(:[0-9]+)?$" . }}
+        {{- $pattern = replace "\\*" "[A-Za-z0-9-]+" $pattern }}
+        {{- end }}
+        {{ printf "~^%s$" $pattern | quote }} $http_origin;
+        {{- end }}
+        {{- end }}
+    }
+
     server {
         listen 8080;
 
         location / {
-            # Handle CORS preflight requests
             if ($request_method = 'OPTIONS') {
-                add_header 'Access-Control-Allow-Origin' '{{ .Values.cors.allowOrigins }}';
+                add_header 'Access-Control-Allow-Origin' $cors_allow_origin always;
+                add_header 'Vary' 'Origin' always;
                 add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, PATCH, OPTIONS';
                 add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
                 add_header 'Access-Control-Max-Age' 1728000;
@@ -21,15 +42,15 @@ data:
                 return 204;
             }
 
-            # Proxy non-CORS requests to the wallet app
             proxy_pass http://127.0.0.1:3000;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_hide_header Access-Control-Allow-Origin;
 
-            # Add CORS headers to all responses
-            add_header 'Access-Control-Allow-Origin' '{{ .Values.cors.allowOrigins }}' always;
+            add_header 'Access-Control-Allow-Origin' $cors_allow_origin always;
+            add_header 'Vary' 'Origin' always;
             add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, PATCH, OPTIONS' always;
             add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
             add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;

@@ -12,6 +12,10 @@ spec:
       app: {{ include "safe-client-gateway.fullname" . }}-web
   template:
     metadata:
+      {{- if .Values.cors.enabled }}
+      annotations:
+        checksum/cors: {{ include (print $.Template.BasePath "/cors.nginx-configmap.yaml") . | sha256sum }}
+      {{- end }}
       labels:
         app: {{ include "safe-client-gateway.fullname" . }}-web
     spec:

@@ -14,6 +14,8 @@ helm package charts/safe-client-gateway -d charts/packages
 
 helm package charts/safe-wallet-web -d charts/packages
 
+helm package charts/safe-tx-builder -d charts/packages
+
 helm dependency build charts/safe-stack/
 helm package charts/safe-stack -d charts/packages
 

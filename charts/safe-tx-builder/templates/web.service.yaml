@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: {{ include "safe-tx-builder.fullname" . }}
+
+spec:
+  selector:
+    app: {{ include "safe-tx-builder.fullname" . }}
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: http

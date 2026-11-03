@@ -1,6 +1,6 @@
 apiVersion: v2
 name: safe-wallet-web
-version: 0.2.3
+version: 0.3.0
 appVersion: "3d60854"
 description: A Helm chart to deploy the XRPL EVM Multisig web app, a rebranded fork of safe-wallet-web
 keywords:

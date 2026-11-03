@@ -1,3 +1,4 @@
+{{- define "safe-wallet-web.deployment" -}}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -12,6 +13,8 @@ spec:
       app: {{ include "safe-wallet-web.fullname" . }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include "safe-wallet-web.envConfigMap" . | sha256sum }}
       labels:
         app: {{ include "safe-wallet-web.fullname" . }}
     spec:
@@ -83,3 +86,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 ---
+{{- end }}
+{{- if not .Values.parentManaged }}
+{{ include "safe-wallet-web.deployment" . }}
+{{- end }}

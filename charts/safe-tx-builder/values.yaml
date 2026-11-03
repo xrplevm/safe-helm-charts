@@ -1,0 +1,54 @@
+# Default values for safe-tx-builder.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Provide a name in place of safe-tx-builder for `app:` labels
+##
+nameOverride: ""
+## Provide a name to substitute for the full names of resources
+##
+fullnameOverride: ""
+## Reference to one or more secrets to be used when pulling images
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+##
+imagePullSecrets: []
+
+replicaCount: 1
+
+## The wallet image: it contains the whole safe-wallet-web monorepo, apps/tx-builder included.
+## The container runs apps/tx-builder/scripts/static-serve.sh instead of the wallet: it builds the app
+## from the env below, stops when the build has Safe branding, and serves it on port 4000.
+image:
+  repository: ghcr.io/xrplevm/safe-wallet-web
+  ## Commit tag for traceability, pinned by the published image digest.
+  tag: e7c554c0313bb2c92618d83fd468dd23472646a1@sha256:4ce371031be7e371c8b1229215770507c341097bb5ae9b7a691580d25151d6e6
+  pullPolicy: IfNotPresent
+
+extraEnv: []
+
+config:
+  clientGateway:
+    ## Required. Public URL of the Client Gateway. The browser calls it for ABIs and chain data, so the gateway
+    ## CORS allowlist must include this app's origin (https://<ingress.host>). Built into the bundle on start.
+    url: "https://cgw-service.minikube.net"
+
+web:
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+  securityContext: {}
+  podSecurityContext: {}
+  resources: {}
+
+## Use a host of its own: on the wallet origin, the app could read the wallet storage.
+## Do not use "safe" in the host name (Safe trademark policy, section 3.2).
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  host: tx-builder.minikube.net
+  annotations:
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  tls:
+    enabled: false
+    #host:
+    #secretName:

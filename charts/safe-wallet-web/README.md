@@ -69,6 +69,7 @@ helm show values safe-wallet-web
 |---|---|---|
 | `nameOverride` | Provide a name in place of safe-wallet-web for `app:` labels | `""` |
 | `fullnameOverride` | Provide a name to substitute for the full names of resources | `""` |
+| `parentManaged` | Internal. Let `safe-stack` render the wallet ConfigMap and Deployment. Keep `false` for standalone installs | `false` |
 
 ### Installation parameters
 
@@ -80,7 +81,7 @@ helm show values safe-wallet-web
 | `image.tag` | Web app image tag (commit SHA of the `1.82.0` branch, pinned by digest) | `3d608540a38984ac4dc5c912addd12e37ef94fa3@sha256:6645c7707c8d73261c48c504c2ef5a148aa833333dd14511a1b2eae9618ac564` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `extraEnv` | Specify additional environment variables | `[]` |
-| `extraEnvVars` | Extra variables in the env ConfigMap. `NEXT_PUBLIC_DEFAULT_MAINNET_CHAIN_ID` and `NEXT_PUBLIC_APP_URL` here take precedence over `config.defaultChainId` and `config.appUrl` | `{}` |
+| `extraEnvVars` | Extra variables in the env ConfigMap. `NEXT_PUBLIC_DEFAULT_MAINNET_CHAIN_ID`, `NEXT_PUBLIC_APP_URL` and `NEXT_PUBLIC_TX_BUILDER_URL` here take precedence over `config.defaultChainId`, `config.appUrl` and `config.txBuilderUrl` | `{}` |
 
 ### Configuration parameters
 
@@ -91,6 +92,7 @@ helm show values safe-wallet-web
 | `config.safeVersion` | Safe contract version used for new accounts | `1.4.1+L2` |
 | `config.defaultChainId` | Chain selected when the app opens. A non-empty `extraEnvVars.NEXT_PUBLIC_DEFAULT_MAINNET_CHAIN_ID` takes precedence | `1440000` |
 | `config.appUrl` | Public origin of the app, used for link previews. Required when ingress is disabled or has no host | `https://<ingress.host>` |
+| `config.txBuilderUrl` | URL of the Transaction Builder app ([safe-tx-builder](../safe-tx-builder) chart). Empty: standalone links open the app list; `safe-stack` derives the URL from its enabled builder | `""` |
 | `config.walletConnect.projectId` | Wallet-Connect project ID | `""` |
 | `config.walletConnect.bridge` | Wallet-Connect Bridge | `""` |
 

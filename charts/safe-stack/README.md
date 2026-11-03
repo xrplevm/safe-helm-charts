@@ -107,8 +107,20 @@ Refer to [safe-global/safe-client-gateway](../safe-client-gateway/) for configur
 | Parameter | Description | Default |
 |---|---|---|
 | `safe-wallet-web.enabled` | Spin up safe-wallet-web  | `true` |
+| `safe-wallet-web.config.txBuilderUrl` | Optional external builder URL. Empty: use `https://<safe-tx-builder.ingress.host>` when the builder is enabled, otherwise the wallet opens the app list | `""` |
 
 Refer to [safe-global/safe-wallet-web](../safe-wallet-web/) for configuration.
+
+### safe-tx-builder parameters
+
+| Parameter | Description | Default |
+|---|---|---|
+| `safe-tx-builder.enabled` | Spin up safe-tx-builder | `true` |
+| `safe-tx-builder.image.tag` | Wallet image containing the builder start script, pinned by digest | `e7c554c0313bb2c92618d83fd468dd23472646a1@sha256:4ce371031be7e371c8b1229215770507c341097bb5ae9b7a691580d25151d6e6` |
+
+Refer to [safe-tx-builder](../safe-tx-builder/) for configuration.
+
+The stack resolves the builder URL once for the wallet ConfigMap and its rollout checksum. `safe-wallet-web.extraEnvVars.NEXT_PUBLIC_TX_BUILDER_URL` takes precedence over `safe-wallet-web.config.txBuilderUrl`, which takes precedence over the derived URL. Leave the internal `safe-wallet-web.parentManaged` flag enabled.
 
 
 

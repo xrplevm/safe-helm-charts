@@ -373,9 +373,12 @@ safe-client-gateway:
 ##
 safe-wallet-web:
   enabled: true
+  parentManaged: true
   replicaCount: 1
   extraEnv: []
   config:
+    ## Optional external builder URL. Empty: derive from the enabled safe-tx-builder ingress host.
+    txBuilderUrl: ""
     clientGateway:
       url: "https://cgw-service.minikube.net"
     walletConnect:
@@ -388,6 +391,36 @@ safe-wallet-web:
     annotations:
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/enable-cors: "false"
+    tls:
+      enabled: false
+      #host:
+      #secretName:
+
+##
+## ---------------------------------------------------------------------------
+## TX-BUILDER CONFIGURATION (NEW)
+## Transaction Builder app, opened by the wallet in an iframe. Runs the wallet image.
+## ---------------------------------------------------------------------------
+##
+safe-tx-builder:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/xrplevm/safe-wallet-web
+    ## Commit tag for traceability, pinned by the published image digest.
+    tag: e7c554c0313bb2c92618d83fd468dd23472646a1@sha256:4ce371031be7e371c8b1229215770507c341097bb5ae9b7a691580d25151d6e6
+    pullPolicy: IfNotPresent
+  config:
+    clientGateway:
+      ## The gateway CORS allowlist must include https://<ingress.host>. *.minikube.net is allowed above.
+      url: "https://cgw-service.minikube.net"
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    ## A host of its own, without "safe" in the name.
+    host: tx-builder.minikube.net
+    annotations:
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     tls:
       enabled: false
       #host:

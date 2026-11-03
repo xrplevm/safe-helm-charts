@@ -1,5 +1,13 @@
 # ChangeLog
 
+## 0.3.0
+
+### Features
+
+- Add `config.txBuilderUrl`, rendered as `NEXT_PUBLIC_TX_BUILDER_URL`. The wallet's Transaction Builder links open this app. A non-empty `extraEnvVars.NEXT_PUBLIC_TX_BUILDER_URL` takes precedence.
+- Add a ConfigMap checksum to the wallet Pod template so environment configuration changes trigger a rollout and rebuild the wallet bundle.
+- Let `safe-stack` compose the wallet ConfigMap and Deployment with a derived builder URL, while standalone installs render them as before.
+
 ## 0.2.3
 
 ### Fixes

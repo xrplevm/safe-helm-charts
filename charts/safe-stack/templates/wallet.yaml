@@ -1,0 +1,11 @@
+{{- $wallet := index .Subcharts "safe-wallet-web" -}}
+{{- if and $wallet $wallet.Values.parentManaged -}}
+{{- $values := deepCopy $wallet.Values -}}
+{{- $builder := index .Values "safe-tx-builder" -}}
+{{- if and (not (coalesce (get ($values.extraEnvVars | default dict) "NEXT_PUBLIC_TX_BUILDER_URL") $values.config.txBuilderUrl)) $builder.enabled -}}
+{{- $_ := set $values.config "txBuilderUrl" (printf "https://%s" (required "safe-tx-builder.ingress.host is required to derive the wallet builder URL" $builder.ingress.host)) -}}
+{{- end -}}
+{{- $context := dict "Values" $values "Chart" $wallet.Chart "Release" .Release "Capabilities" .Capabilities "Template" .Template -}}
+{{ include "safe-wallet-web.envConfigMap" $context }}
+{{ include "safe-wallet-web.deployment" $context }}
+{{- end }}
