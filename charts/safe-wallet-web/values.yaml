@@ -22,7 +22,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/xrplevm/safe-wallet-web
   ## Tag and digest: the tag shows the commit, the digest stops a re-push from changing what runs.
-  tag: 320d73311b330ee797d57c9ac8ac08befec224cf@sha256:001ee562646d8749160fbaa6d6cc01581af39afdd9be298bcd7d77b67740c04c  # branch 1.82.0
+  tag: 3d608540a38984ac4dc5c912addd12e37ef94fa3@sha256:6645c7707c8d73261c48c504c2ef5a148aa833333dd14511a1b2eae9618ac564  # branch 1.82.0
   pullPolicy: IfNotPresent
 
 extraEnv: []

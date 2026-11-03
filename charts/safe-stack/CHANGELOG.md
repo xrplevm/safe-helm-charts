@@ -1,5 +1,17 @@
 # ChangeLog
 
+## 0.3.2
+
+### Fixes
+
+- Use `safe-wallet-web` chart 0.2.3: after creating a Safe, the app waits until the gateway has indexed it and then opens it.
+
+## 0.3.1
+
+### Fixes
+
+- Use `safe-wallet-web` chart 0.2.2: a Safe that is not deployed yet opens without "Invalid multiSend contract address", and the creation screen opens the new Safe when it is ready.
+
 ## 0.3.0
 
 ### Features

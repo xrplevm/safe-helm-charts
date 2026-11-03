@@ -1,6 +1,6 @@
 apiVersion: v2
 name: safe-stack
-version: 0.3.0
+version: 0.3.2
 appVersion: "2024-07-24_001"
 description: A Helm chart to deploy the full Safe{Stack} inclusing txs-service, cfg-service, cgw-service and wallet-web
 keywords:
@@ -31,7 +31,7 @@ dependencies:
   repository: "file://../safe-client-gateway"
   condition: safe-client-gateway.enabled
 - name: safe-wallet-web
-  version: "0.2.1"
+  version: "0.2.3"
   repository: "file://../safe-wallet-web"
   condition: safe-wallet-web.enabled
 - name: safe-events-service

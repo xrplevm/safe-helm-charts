@@ -1,5 +1,17 @@
 # ChangeLog
 
+## 0.2.3
+
+### Fixes
+
+- Use image commit `3d60854` (digest `sha256:6645c7707c8d…`). After creating a Safe, the app waits until the gateway has indexed it and then opens it, so the "This multisig account couldn't be loaded" screen no longer appears.
+
+## 0.2.2
+
+### Fixes
+
+- Use image commit `29f4c80` (digest `sha256:d05bfa78b80d…`). A Safe that is not deployed yet opens without "Invalid multiSend contract address", and the creation screen opens the new Safe when it is ready.
+
 ## 0.2.1
 
 ### Fixes
