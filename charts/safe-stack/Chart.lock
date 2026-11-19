@@ -1,16 +1,16 @@
 dependencies:
 - name: safe-transaction-service
   repository: file://../safe-transaction-service
-  version: 0.1.0
+  version: 0.1.1
 - name: safe-config-service
   repository: file://../safe-config-service
-  version: 0.2.0
+  version: 0.2.1
 - name: safe-client-gateway
   repository: file://../safe-client-gateway
   version: 0.2.0
 - name: safe-wallet-web
   repository: file://../safe-wallet-web
-  version: 0.3.0
+  version: 0.3.1
 - name: safe-tx-builder
   repository: file://../safe-tx-builder
   version: 0.1.0
@@ -23,5 +23,5 @@ dependencies:
 - name: rabbitmq
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 14.6.5
-digest: sha256:bd1d2717f2f866c885b4749e242bc5e09f6fc1dd38f90253a2fcec664ed70c3c
-generated: "2026-11-03T13:33:21.774498696+01:00"
+digest: sha256:4ea3e73bfaf0a75fb12789a218cba19d56d51af00d99e4d1d070b93338815058
+generated: "2026-11-19T10:39:32.469797301+01:00"

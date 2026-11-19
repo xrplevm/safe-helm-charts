@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 0.4.1
+
+### Fixes
+
+- Use `safe-wallet-web` chart 0.3.1: the basic auth sidecar is pinned to `nginx:1.31.9-alpine`, which includes the security fixes of 18 November 2026.
+- Use `safe-transaction-service` chart 0.1.1 and `safe-config-service` chart 0.2.1, and pin the `safe-client-gateway` CORS sidecar: all nginx sidecars now use `nginx:1.31.9-alpine`, which includes the security fixes of 18 November 2026.
+
 ## 0.4.0
 
 ### Features

@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 0.3.1
+
+### Fixes
+
+- Pin the basic auth sidecar to `nginx:1.31.9-alpine` (digest `sha256:90b6bd2aec27…`) instead of the floating `nginx:alpine` tag. nginx 1.31.9 includes the security fixes of 18 November 2026.
+
 ## 0.3.0
 
 ### Features

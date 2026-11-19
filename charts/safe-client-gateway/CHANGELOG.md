@@ -8,6 +8,10 @@
 - Add `Vary: Origin` to CORS sidecar responses and support the default single-subdomain wildcard without returning a literal wildcard origin. Scalar `"*"` still allows any origin.
 - Restart the gateway pods when the CORS ConfigMap changes so nginx loads the updated origin allowlist.
 
+### Fixes
+
+- Pin the CORS sidecar to `nginx:1.31.9-alpine` (digest `sha256:90b6bd2aec27…`) instead of the floating `nginx:alpine` tag. nginx 1.31.9 includes the security fixes of 18 November 2026.
+
 ## 0.2.0
 
 ### Breaking changes
